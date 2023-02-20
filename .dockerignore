@@ -1,0 +1,9 @@
+## .dockerignore:
+# au moment du docker build, le contexte de build est chargé côté démon docker
+# contexte de build: le dossier dans lequel se trouve de Dockerfile
+# pour éviter de charger des fichiers volumineux inutiles au build, 
+# on les rajoute au fichier .dockerignore 
+# annuler le contexte de build: docker build ... - < /path/to/Dockerfile
+# - : utiliser le flux d'entrée (clavier)
+# < : rediriger le flux d'entrée
+.vagrant

@@ -6,6 +6,8 @@ LABEL created_at.month="2022-10"
 LABEL stack="java_app"
 LABEL stack.version="1.0.0"
 
+# directive ARG: variable custom pilotée depuis la commande docker build
+# via les options "--build-arg VAR=value"
 ARG TOMCAT_VERSION_MAJOR
 ARG TOMCAT_VERSION_MINOR
 

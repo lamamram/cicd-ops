@@ -1,5 +1,14 @@
+image: docker:20.10.23
+
+variables:
+  TOMCAT_VERSION_MAJOR: 8
+  TOMCAT_VERSION_MINOR: 8.5.85
+
 docker build:
   script:
-    - echo "docker build !!!"
+    - >
+      docker build -t my_tomcat_app:rc-1.0 
+      --build-arg TOMCAT_VERSION_MAJOR=$TOMCAT_VERSION_MAJOR
+      --build-arg TOMCAT_VERSION_MINOR=$TOMCAT_VERSION_MINOR .
   tags:
     - myusine
