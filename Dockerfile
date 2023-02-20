@@ -34,13 +34,13 @@ VOLUME /opt/tomcat/webapps
 # pour communiquer avec apache
 EXPOSE 8080
 
-# test de l'image dès le build
+# test de l'image dès le lancement du conteneur
 # le checl démarre après start-period s
 # test la commande CMD jusqu'à timeout s
 # si concluant, OK
 # sinon on réessaye retries * après interval s
-HEALTHCHECK --interval=10s --timeout=10s --start-period=3s --retries=3 CMD grep "Server startup" /opt/tomcat/logs/catalina.*.log
-# la cmd est exécutée à lla création d'un conteneur,
+HEALTHCHECK --interval=3s --timeout=10s --start-period=3s --retries=3 CMD grep "Server startup" /opt/tomcat/logs/catalina.*.log
+# la cmd est exécutée à la création d'un conteneur,
 # passe le status à starting le temps d'exécuter tous les essais
 # passe le status à healthy si réussi
 # passe le status à unhealthy si échoué après tous les essais
