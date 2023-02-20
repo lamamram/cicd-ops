@@ -24,8 +24,8 @@ before_script:
   # préférer un deploy token ou un personal token plutôt que des ids gitlab 
   - >
     docker login $CI_REGISTRY
-    -u $CI_DEPLOY_USER 
-    -p $CI_DEPLOY_PASSWORD
+    -u "$CI_DEPLOY_USER" 
+    -p "$CI_DEPLOY_PASSWORD"
 
 docker build:
   # services:
