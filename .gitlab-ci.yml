@@ -15,6 +15,8 @@ variables:
   TOMCAT_VERSION_MINOR: 8.5.85
 
 docker build:
+  variables:
+    DOCKER_TLS_VERIFY: 0
   services:
     - docker:20.10.23-dind
   script:
