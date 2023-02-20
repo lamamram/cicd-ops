@@ -1,0 +1,5 @@
+docker build:
+  script:
+    - echo "docker build !!!"
+  tags:
+    - myusine
