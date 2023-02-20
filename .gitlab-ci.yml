@@ -23,10 +23,9 @@ variables:
 before_script:
   # préférer un deploy token ou un personal token plutôt que des ids gitlab 
   - >
-    echo "$CI_DEPLOY_PASSWORD" |
     docker login $CI_REGISTRY
     -u $CI_DEPLOY_USER 
-    --password-stdin 
+    -p $CI_DEPLOY_PASSWORD
 
 docker build:
   # services:
