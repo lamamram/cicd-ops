@@ -16,8 +16,7 @@ variables:
 
 docker build:
   services:
-    - name: docker:20.10.23-dind-rootless
-      alias: docker
+    - docker:20.10.23-dind
   script:
     - >
       docker build -t my_tomcat_app:rc-1.0 
