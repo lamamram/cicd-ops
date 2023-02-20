@@ -1,3 +1,13 @@
+# attention: l'image docker ne contient que la CLI
+# pour accéder à un démon docker, deux possibilités:
+
+## 1. partager la socker unix de la VM dans la conf du runner
+##    "volumes = ["/var/run/docker.sock:/var/run/docker.sock",...]"
+##    dans /etc/gitlab-runner/config.toml
+##    attention: solution insecure car accès de TOUS les contenurs du pipeline
+##    au dockerd de la vm (faille possible)
+
+# 2. adjoindre au job un sevice conteneur "docker in docker" contenant un démon
 image: docker:20.10.23
 
 variables:
@@ -5,6 +15,8 @@ variables:
   TOMCAT_VERSION_MINOR: 8.5.85
 
 docker build:
+  services:
+    - docker:20.10.23-dind-rootless
   script:
     - >
       docker build -t my_tomcat_app:rc-1.0 
