@@ -21,11 +21,14 @@ variables:
 
 # before_script global, exécuté avant les scripts de chaque job
 before_script:
-  # préférer un deploy token ou un personal token plutôt que des ids gitlab 
+  # préférer un deploy token (ne fonctionne pas en 15.7.5) 
+  # ou un personal token + variable secrète plutôt que des ids gitlab 
   - >
+    echo "$REGISTRY_TOKEN" |
     docker login $CI_REGISTRY
-    -u gitlab-deploy-token
-    -p "$CI_DEPLOY_PASSWORD"
+    -u "$CI_REGISTRY_USER"
+    --password-stdin
+
 
 docker build:
   # services:
