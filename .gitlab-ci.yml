@@ -18,6 +18,11 @@ variables:
   TOMCAT_VERSION_MAJOR: 8
   TOMCAT_VERSION_MINOR: 8.5.85
   # DOCKER_TLS_CERTDIR: /certs
+  TRIGGER_BUILD: "off"
+
+stages:
+  - build image
+  - test image
 
 # before_script global, exécuté avant les scripts de chaque job
 before_script:
@@ -31,6 +36,7 @@ before_script:
 
 
 docker build:
+  stage: build image
   # services:
   #   - docker:20.10.23-dind
   script:
@@ -49,3 +55,15 @@ docker build:
     - docker stop test_build && docker rm test_build
   tags:
     - myusine
+  # on ne build que si le Dockerfile a changé
+  # ou si on passe nous même une variable à "on"
+  rules:
+    - changes: [Dockerfile]
+    - if: $TRIGGER_BUILD == "on"
+
+scan:
+  stage: test image
+  tags:
+    - myusine
+  script:
+    - echo "scan"
