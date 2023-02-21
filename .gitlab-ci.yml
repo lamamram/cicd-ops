@@ -65,7 +65,13 @@ docker build:
     - changes: [Dockerfile]
     - if: $TRIGGER_BUILD == "on"
 
-scan:
+
+# template de job générique d'analyse d'image pour gitlab > v15 
+include:
+  - template: Security/Container-Scanning.gitlab-ci.yml
+
+# "." comme préfixe de job => désactivation
+.scan:
   stage: test image
   # connexion de trivy au registre d'image
   variables:
