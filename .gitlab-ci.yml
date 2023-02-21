@@ -79,11 +79,13 @@ scan:
   before_script: [""]
   script:
     # --severity: seuil de vulnérabilité pour l'analyse
+    # --scanners vuln: choix du type de scans
     # --no-progress: nettoyer la console
     # --cache-dir: placer le cache là où gitlab peut le prélever
     - >
       trivy image 
       --severity HIGH
+      --scanners vuln
       --no-progress
       --cache-dir .trivycache/
       $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
