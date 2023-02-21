@@ -22,7 +22,7 @@ variables:
   TOMCAT_VERSION_MAJOR: 8
   TOMCAT_VERSION_MINOR: 8.5.85
   # DOCKER_TLS_CERTDIR: /certs
-  TRIGGER_BUILD: "on"
+  TRIGGER_BUILD: "off"
 
 stages:
   - build image
@@ -77,8 +77,10 @@ container_scanning:
   before_script: [""]
   variables:
     # fetch: utilise le code d'un précédent job
-    GIT_STRATEGY: fetch
+    GIT_STRATEGY: none
     CS_IMAGE: $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+    CS_REGISTRY_USER: $CI_REGISTRY_USER
+    CS_REGISTRY_PASSWORD: $REGISTRY_TOKEN
 
 # "." comme préfixe de job => désactivation
 .scan:
