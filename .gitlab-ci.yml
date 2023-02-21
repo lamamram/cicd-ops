@@ -74,5 +74,8 @@ scan:
     entrypoint: [""]
   tags:
     - myusine
+  # subsidiarité: neutralisation du before_script global par le before_script local
+  # ... car le conteneur trivy ne contient pas les commandes docker !!!
+  before_script: [""]
   script:
     - trivy image $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
