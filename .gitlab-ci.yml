@@ -28,6 +28,10 @@ stages:
   - build image
   - test image
 
+# template de job générique d'analyse d'image pour gitlab > v15 
+include:
+  - template: Security/Container-Scanning.gitlab-ci.yml
+
 # before_script global, exécuté avant les scripts de chaque job
 before_script:
   # préférer un deploy token (ne fonctionne pas en 15.7.5) 
@@ -64,14 +68,13 @@ docker build:
   rules:
     - changes: [Dockerfile]
     - if: $TRIGGER_BUILD == "on"
-
-
-scan:
+    
+# job issu du template, placé dans le pipeline courant
+container_scanning:
   stage: test image
-  trigger:
-    # template de job générique d'analyse d'image pour gitlab > v15 
-    include:
-      - template: Security/Container-Scanning.gitlab-ci.yml
+  tags:
+    - myusine
+  before_script: [""]
 
 # "." comme préfixe de job => désactivation
 .scan:
