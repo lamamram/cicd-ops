@@ -78,6 +78,7 @@ container_scanning:
   variables:
     # fetch: utilise le code d'un précédent job
     GIT_STRATEGY: fetch
+    CS_IMAGE: $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
 
 # "." comme préfixe de job => désactivation
 .scan:
