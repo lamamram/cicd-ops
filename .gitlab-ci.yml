@@ -27,10 +27,11 @@ variables:
 stages:
   - build image
   - test image
+  - confirm image
 
 # template de job générique d'analyse d'image pour gitlab > v15 
-include:
-  - template: Security/Container-Scanning.gitlab-ci.yml
+# include:
+#   - template: Security/Container-Scanning.gitlab-ci.yml
 
 # before_script global, exécuté avant les scripts de chaque job
 before_script:
@@ -61,8 +62,7 @@ docker build:
   # nettoyage du conteneur de test pour éviter de planter à la porchaine exécution
   after_script:
     - docker stop test_build && docker rm test_build
-  tags:
-    - myusine
+  tags: [myusine]
   # on ne build que si le Dockerfile a changé
   # ou si on passe nous même une variable à "on"
   rules:
@@ -70,20 +70,20 @@ docker build:
     - if: $TRIGGER_BUILD == "on"
     
 # job issu du template, placé dans le pipeline courant
-container_scanning:
-  stage: test image
-  tags:
-    - myusine
-  before_script: [""]
-  variables:
-    # fetch: utilise le code d'un précédent job
-    GIT_STRATEGY: none
-    CS_IMAGE: $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
-    CS_REGISTRY_USER: $CI_REGISTRY_USER
-    CS_REGISTRY_PASSWORD: $REGISTRY_TOKEN
-
 # "." comme préfixe de job => désactivation
-.scan:
+# .container_scanning:
+#   stage: test image
+#   tags:
+#     - myusine
+#   before_script: [""]
+#   variables:
+#     # fetch: utilise le code d'un précédent job
+#     GIT_STRATEGY: none
+#     CS_IMAGE: $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+#     CS_REGISTRY_USER: $CI_REGISTRY_USER
+#     CS_REGISTRY_PASSWORD: $REGISTRY_TOKEN
+
+scan:
   stage: test image
   # connexion de trivy au registre d'image
   variables:
@@ -103,8 +103,7 @@ container_scanning:
     name: aquasec/trivy
     # désactivation de l'entrypoint de l'image trivy de base
     entrypoint: [""]
-  tags:
-    - myusine
+  tags: [myusine]
   # subsidiarité: neutralisation du before_script global par le before_script local
   # ... car le conteneur trivy ne contient pas les commandes docker !!!
   before_script: [""]
@@ -113,12 +112,12 @@ container_scanning:
     # --scanners vuln: choix du type de scans
     # --no-progress: nettoyer la console
     # --cache-dir: placer le cache là où gitlab peut le prélever
-    - >
-      trivy image 
-      $TRIVY_OPTS
-      --template "@/contrib/gitlab.tpl" 
-      --output "$CI_PROJECT_DIR/gl-container-scanning-report.json"
-      $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+    # - >
+    #   trivy image 
+    #   $TRIVY_OPTS
+    #   --template "@/contrib/gitlab.tpl" 
+    #   --output "$CI_PROJECT_DIR/gl-container-scanning-report.json"
+    #   $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
     - >
       trivy image 
       $TRIVY_OPTS
@@ -136,6 +135,22 @@ container_scanning:
     # pour téléchargement
     paths:
       - html-container-scanning-report.html
-    # pour intégration dans gitlab pour version < 15 
-    reports:
-      container_scanning: gl-container-scanning-report.json
+    # pour intégration dans gitlab pour version < 15 (pas gratuit)
+    # reports:
+    #   container_scanning: gl-container-scanning-report.json
+  rules:
+    - changes: [Dockerfile]
+    - if: $TRIGGER_BUILD == "on"
+
+
+push image:
+  tags: [myusine]
+  stage: confirm image
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+    - >
+      docker tag 
+      $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+      $CI_REGISTRY_IMAGE/my_tomcat_app:1.0
+    - docker push $CI_REGISTRY_IMAGE/my_tomcat_app:1.0
+    - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
