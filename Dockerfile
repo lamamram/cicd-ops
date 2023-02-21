@@ -1,4 +1,4 @@
-FROM centos:8.4.2105
+FROM centos:7.9.2009
 
 LABEL author="matt"
 LABEL created_at.year="2022"
