@@ -22,11 +22,11 @@ variables:
 # before_script global, exécuté avant les scripts de chaque job
 before_script:
   # préférer un deploy token ou un personal token plutôt que des ids gitlab 
-  # -u "$CI_DEPLOY_USER"
-  - >
-    echo "$CI_DEPLOY_USER\n$CI_DEPLOY_PASSWORD" |
+  - > |
     docker login $CI_REGISTRY
-    --password-stdin
+    -u "$CI_DEPLOY_USER"
+    -p "$CI_DEPLOY_PASSWORD"
+  - echo "$CI_DEPLOY_USER"
 
 docker build:
   # services:
