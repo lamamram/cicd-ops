@@ -68,6 +68,12 @@ scan:
     TRIVY_USERNAME: "$CI_REGISTRY_USER"
     TRIVY_PASSWORD: "$REGISTRY_TOKEN"
     TRIVY_AUTH_URL: "$CI_REGISTRY"
+    TRIVY_OPTS: >
+                --severity HIGH
+                --scanners vuln
+                --no-progress
+                --cache-dir .trivycache/
+                --format template
   image:
     name: aquasec/trivy
     # désactivation de l'entrypoint de l'image trivy de base
@@ -84,13 +90,27 @@ scan:
     # --cache-dir: placer le cache là où gitlab peut le prélever
     - >
       trivy image 
-      --severity HIGH
-      --scanners vuln
-      --no-progress
-      --cache-dir .trivycache/
+      $TRIVY_OPTS
+      --template "@/contrib/gitlab.tpl" 
+      --output "$CI_PROJECT_DIR/gl-container-scanning-report.json"
+      $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+    - >
+      trivy image 
+      $TRIVY_OPTS
+      --template "@/contrib/html.tpl" 
+      --output "$CI_PROJECT_DIR/html-container-scanning-report.html"
       $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
   cache:
     key: trivy
     paths:
       - .trivycache/
     policy: pull-push
+  # prélèvement des rapports et autres produits du job
+  artifacts:
+    expire_in: "1 hour"
+    # pour téléchargement
+    paths:
+      - html-container-scanning-report.html
+    # pour intégration dans gitlab
+    reports:
+      container_scanning: gl-container-scanning-report.json
