@@ -27,6 +27,7 @@ before_script:
     docker login $CI_REGISTRY
     -u "$CI_REGISTRY_USER"
     --password-stdin
+  - echo "$CI_REGISTRY_USER"
 
 docker build:
   # services:
