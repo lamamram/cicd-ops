@@ -63,7 +63,16 @@ docker build:
 
 scan:
   stage: test image
+  # connexion de trivy au registre d'image
+  variables:
+    TRIVY_USERNAME: "$CI_REGISTRY_USER"
+    TRIVY_PASSWORD: "$REGISTRY_TOKEN"
+    TRIVY_AUTH_URL: "$CI_REGISTRY"
+  image:
+    name: bitnami/trivy
+    # désactivation de l'entrypoint de l'image trivy de base
+    entrypoint: [""]
   tags:
     - myusine
   script:
-    - echo "scan"
+    - trivy image $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
