@@ -1,4 +1,4 @@
-FROM centos:8
+FROM centos:7.9.2009
 
 LABEL author="matt"
 LABEL created_at.year="2022"
@@ -13,13 +13,14 @@ ARG TOMCAT_VERSION_MINOR
 
 # exprérimentation: 1 run par cmd
 # production: 1 run pour toutes les cmds (minimiser les couches)
+# pour centos 8:
+# sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+# sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
 RUN mkdir /opt/tomcat && \
     curl -O https://downloads.apache.org/tomcat/tomcat-${TOMCAT_VERSION_MAJOR}/v${TOMCAT_VERSION_MINOR}/bin/apache-tomcat-${TOMCAT_VERSION_MINOR}.tar.gz && \
     tar -zxf apache-tomcat-${TOMCAT_VERSION_MINOR}.tar.gz && \
     mv apache-tomcat-${TOMCAT_VERSION_MINOR}/* /opt/tomcat/ && \
     cd /etc/yum.repos.d/ && \
-    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
-    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
     yum update -y && yum install java -y -q && \
     yum clean all && \
     rm -rf apache-tomcat*
