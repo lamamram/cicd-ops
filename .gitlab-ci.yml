@@ -22,7 +22,7 @@ variables:
   TOMCAT_VERSION_MAJOR: 8
   TOMCAT_VERSION_MINOR: 8.5.85
   # DOCKER_TLS_CERTDIR: /certs
-  TRIGGER_BUILD: "off"
+  TRIGGER_BUILD: "on"
 
 stages:
   - build image
@@ -50,15 +50,15 @@ docker build:
   #   - docker:20.10.23-dind
   script:
     - >
-      docker build -t $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0 
+      docker build -t "$CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA" 
       --build-arg TOMCAT_VERSION_MAJOR=$TOMCAT_VERSION_MAJOR
       --build-arg TOMCAT_VERSION_MINOR=$TOMCAT_VERSION_MINOR .
     # vérification du HEALTHCHECK
-    - docker run -d --name test_build my_tomcat_app:rc-1.0
+    - docker run -d --name test_build my_tomcat_app:$CI_COMMIT_SHA
     - sleep 5
     - docker ps -f name="test_build" | grep -o "(healthy)"
     # upload de l'image sur le registre d'image privé de gitlab
-    - docker push $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+    - docker push $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA
   # nettoyage du conteneur de test pour éviter de planter à la porchaine exécution
   after_script:
     - docker stop test_build && docker rm test_build
@@ -117,13 +117,13 @@ scan:
     #   $TRIVY_OPTS
     #   --template "@/contrib/gitlab.tpl" 
     #   --output "$CI_PROJECT_DIR/gl-container-scanning-report.json"
-    #   $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+    #   $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA
     - >
       trivy image 
       $TRIVY_OPTS
       --template "@/contrib/html.tpl" 
       --output "$CI_PROJECT_DIR/html-container-scanning-report.html"
-      $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+      $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA
   cache:
     key: trivy
     paths:
@@ -142,15 +142,19 @@ scan:
     - changes: [Dockerfile]
     - if: $TRIGGER_BUILD == "on"
 
-
+# TODO: supprimer un tag "SHA" à distance via une requête HTTP avec curl
 push image:
   tags: [myusine]
   stage: confirm image
   script:
-    - docker pull $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+    - docker pull $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA
     - >
       docker tag 
-      $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
-      $CI_REGISTRY_IMAGE/my_tomcat_app:1.0
-    - docker push $CI_REGISTRY_IMAGE/my_tomcat_app:1.0
-    - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+      $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA
+      $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_TAG
+    - docker push $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_TAG
+    - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA
+  rules:
+    - changes: [Dockerfile]
+      if: $CI_COMMIT_TAG
+    - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_TAG
