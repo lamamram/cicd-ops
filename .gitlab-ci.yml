@@ -78,7 +78,17 @@ scan:
   # ... car le conteneur trivy ne contient pas les commandes docker !!!
   before_script: [""]
   script:
+    # --severity: seuil de vulnérabilité pour l'analyse
+    # --no-progress: nettoyer la console
+    # --cache-dir: placer le cache là où gitlab peut le prélever
     - >
       trivy image 
       --severity HIGH
+      --no-progress
+      --cache-dir .trivycache/
       $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
+  cache:
+    key: trivy
+    paths:
+      - .trivycache/
+    policy: pull-push
