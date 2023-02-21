@@ -68,8 +68,6 @@ docker build:
 
 scan:
   stage: test image
-  tags:
-    - myusine
   trigger:
     # template de job générique d'analyse d'image pour gitlab > v15 
     include:
