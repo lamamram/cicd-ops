@@ -22,7 +22,7 @@ variables:
   TOMCAT_VERSION_MAJOR: 8
   TOMCAT_VERSION_MINOR: 8.5.85
   # DOCKER_TLS_CERTDIR: /certs
-  TRIGGER_BUILD: "on"
+  TRIGGER_BUILD: "off"
 
 stages:
   - build image
@@ -61,6 +61,7 @@ docker build:
     - docker push $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA
   # nettoyage du conteneur de test pour éviter de planter à la porchaine exécution
   after_script:
+    - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA
     - docker stop test_build && docker rm test_build
   tags: [myusine]
   # on ne build que si le Dockerfile a changé
@@ -143,6 +144,7 @@ scan:
     - if: $TRIGGER_BUILD == "on"
 
 # TODO: supprimer un tag "SHA" à distance via une requête HTTP avec curl
+# ou mettre en place le nttoyage de tag dans project -> settings -> packages & registries
 push image:
   tags: [myusine]
   stage: confirm image
@@ -154,7 +156,6 @@ push image:
       $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_TAG
     - docker push $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_TAG
     - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_SHA
+    - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_TAG
   rules:
-    - changes: [Dockerfile]
-      if: $CI_COMMIT_TAG
-    - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG
