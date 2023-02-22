@@ -11,4 +11,4 @@
   # labels posés sur la tâche
   tags:
     - 'role:docker'
-  # when: not check_docker.stat.exists
+  when: not check_docker.stat.exists
