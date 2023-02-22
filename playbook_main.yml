@@ -6,4 +6,5 @@
   hosts: dev
   remote_user: "{{ env_user }}"
   roles:
-    - install-docker
+    - name: install-docker
+      become: true

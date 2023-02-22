@@ -1,9 +1,39 @@
 ---
+# procédure d'install classique dans ubuntu:
+# prérequis + clé + dépôt + install
+# - name: DOCKER | install prerequisites
+#   ansible.builtin.apt:
+#     name: "{{ docker_prerequisites }}"
+#     state: present
+#     update_cache: false
+#   when: ansible_os_family == "Debian"
 
-- name: DOCKER | install prerequisites
-  apt:
-    name: "{{ docker_prerequisites }}"
-    state: present
-    update_cache: true
+- name: DOCKER | download key to trusted.gpg.d
+  ansible.builtin.get_url:
+    url: "{{ docker_gpg_key_url }}"
+    dest: /etc/apt/trusted.gpg.d
+    mode: '0644'
+    force: true
   when: ansible_os_family == "Debian"
-  become: true
+
+# gestion du dépôt
+
+# parsing d'un template de fichier pour configurer sur la machine distante
+- name: DOCKER | add docker-ce version apt pref file
+  ansible.builtin.template:
+    src: docker-ce.pref.j2
+    dest: /etc/apt/preferences.d/docker-ce.pref
+    owner: root
+    group: root
+    mode: "0644"
+  when: ansible_os_family == "Debian"
+  
+
+# installation de docker
+
+- name: DOCKER-python | install python docker module
+  pip:
+    name:
+      - setuptools
+      - virtualenv
+      - docker
