@@ -10,5 +10,11 @@
 
     # tâches à réaliser sur les machines distantes
     tasks:
-      - ...
-      - ...
+      - name: BOOTSTRAP | check python3.10 presence on host
+        # stat: informations sur le chemin en paramètre
+        stat:
+          path: /usr/bin/python3.10
+        # affectation des infos de stat dans la variable check_python310
+        register: check_python310
+      
+      
