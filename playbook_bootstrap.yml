@@ -17,4 +17,23 @@
         # affectation des infos de stat dans la variable check_python310
         register: check_python310
       
+      # module debug pour visualiser les variables (objets JSON)
+      # - name: DEBUG | check_python310 value
+      #   debug:
+      #     var: check_python310
       
+      - name: BOOTSTRAP | intall prerequisites for 3rd party repository
+        # module apt: pilotage de apt-get en yaml
+        apt:
+          name: software-properties-common
+          # programmation déclarative: on cherche à déterminer l'état final plutôt qu'une action
+          # present => apt-get install, absent => apt-get remove
+          state: present
+          # demander un apt-get update avant l'install
+          update_cache: yes
+        # conditions d'exécution de la tâche: 3.10 n'existe pas et distribution linux de type debian
+        when: not check_python310.stat.exists and ansible_os_family == "Debian"
+        # apt s'exécute en tant que super utilisateur
+        # l'utilisateur ansible n'a pas de sudo auto.
+        # donc on lance le playbook avec l'option --ask-become-pass
+        become: yes
