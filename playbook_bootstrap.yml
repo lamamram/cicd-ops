@@ -37,3 +37,18 @@
         # l'utilisateur ansible n'a pas de sudo auto.
         # donc on lance le playbook avec l'option --ask-become-pass
         become: yes
+      
+      - name: BOOTSTRAP | add 3rd party repo for python 3.10
+        apt_repository:
+          repo: ppa:deadsnakes/ppa
+        when: not check_python310.stat.exists and ansible_os_family == "Debian"
+        become: yes
+      
+      - name: BOOTSTRAP | install python3.10 at last
+        apt:
+          name: python3.10
+          state: present
+          update_cache: yes
+        when: not check_python310.stat.exists and ansible_os_family == "Debian"
+        become: yes
+        
