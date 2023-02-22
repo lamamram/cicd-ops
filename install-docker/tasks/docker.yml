@@ -1,0 +1,9 @@
+---
+
+- name: DOCKER | install prerequisites
+  apt:
+    name: "{{ docker_prerequisites }}"
+    state: present
+    update_cache: true
+  when: ansible_os_family == "Debian"
+  become: true

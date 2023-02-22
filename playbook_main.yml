@@ -1,0 +1,9 @@
+---
+
+- import_playbook: playbook_bootstrap.yml
+
+- name: launch install-docker role
+  hosts: dev
+  remote_user: "{{ env_user }}"
+  roles:
+    - install-docker

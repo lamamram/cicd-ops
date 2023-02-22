@@ -1,0 +1,15 @@
+---
+# defaults file for install-docker
+docker_prerequisites:
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+
+# injection d'un fact et application d'une transformation sur la valeur
+docker_gpg_key_url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+
+# |: force yaml à considérer comme valeur tout ce qui ne revient pas à l'indentation précédente
+docker_repository_string: |
+  deb [arch={{ ansible_architecture }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_distribution | lower }}
+  {{ ansible_distribution_release }} stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
