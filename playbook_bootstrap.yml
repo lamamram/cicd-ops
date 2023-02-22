@@ -1,0 +1,14 @@
+---
+# l'objet parent d'un playbook ansible est une liste
+  - name: BOOTSTRAP
+    # hosts: par rapport à l'inventaire
+    hosts: dev
+    # compte utilisateur distant
+    # injection de variables via l'opérateur "moustache"
+    # du moteur de templates jinja2
+    remote_user: "{{ env_user }}"
+
+    # tâches à réaliser sur les machines distantes
+    tasks:
+      - ...
+      - ...
