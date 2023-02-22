@@ -8,3 +8,34 @@
   roles:
     - name: install-docker
       become: true
+  
+- name: Deploy tomcat container
+  hosts: dev
+  remote_user: "{{ env_user }}"
+  vars:
+    gitlab_registry_url: gitlab.myusine.fr:5050
+  tasks: 
+    - name: log into registry
+      community.docker.docker_login:
+        registry_url: "{{ gitlab_registry_url }}"
+        username: "{{ extra_registry_login }}"
+        password: "{{ extra_registry_pwd }}"
+        reauthorize: false
+      become: true
+
+    - name: DEPLOY | pull my_tomcat_app:1.0 image
+      community.docker.docker_image:
+        name: "{{ gitlab_registry_url }}/myusine/ops/my_tomcat_app:1.0"
+        source: pull
+      become: true
+    
+    ## ATTENTION: PAS IDEMPOTENT: ne fonctionne que si le container n'existe pas déjà 
+    - name: run the tomcat container
+      community.docker.docker_container:
+        name: my_tomcat_app
+        image: "{{ gitlab_registry_url }}/myusine/ops/my_tomcat_app:1.0"
+        state: started
+        detach: true
+        ports:
+          - "8081:8080"
+      become: true
