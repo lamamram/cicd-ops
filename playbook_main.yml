@@ -23,9 +23,9 @@
         reauthorize: false
       become: true
 
-    - name: DEPLOY | pull my_tomcat_app:1.0 image
+    - name: DEPLOY | pull my_tomcat_app:tag image
       community.docker.docker_image:
-        name: "{{ gitlab_registry_url }}/myusine/ops/my_tomcat_app:1.0"
+        name: "{{ gitlab_registry_url }}/myusine/ops/my_tomcat_app:{{ extra_image_tag }}"
         source: pull
       become: true
     
