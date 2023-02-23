@@ -22,7 +22,7 @@ variables:
   TOMCAT_VERSION_MAJOR: 8
   TOMCAT_VERSION_MINOR: 8.5.85
   # DOCKER_TLS_CERTDIR: /certs
-  TRIGGER_BUILD: "on"
+  TRIGGER_BUILD: "off"
 
 stages:
   - build image
@@ -174,11 +174,11 @@ deploy:
     - mkdir ~/.ssh
     - echo "$STAGING_PRIVKEY" > ~/.ssh/id_rsa
     - chmod 700 ~/.ssh && chmod 400 ~/.ssh/id_rsa
-    - ansible-galaxy collection install community.docker
     # déplacement du fichier ansible.cfg dans un répertoire
     # où il est reconnu 
     - mv ansible.cfg ~/.ansible.cfg
     - mv inventory ~/inventory
+    - ansible-galaxy collection install community.docker
   script:
     # - >
     #   ansible-playbook 
