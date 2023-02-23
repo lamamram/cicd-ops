@@ -63,7 +63,7 @@ docker build:
   # nettoyage du conteneur de test pour éviter de planter à la porchaine exécution
   after_script:
     - docker stop test_build && docker rm test_build
-    - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$GITLAB_USER_NAME-rc
+    # - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$GITLAB_USER_NAME-rc
   tags: [myusine]
   # on ne build que si le Dockerfile a changé
   # ou si on passe nous même une variable à "on"
@@ -171,22 +171,23 @@ deploy:
   tags: [myusine]
   # gestion de la clé privée pour le déploiememnt
   before_script:
-    - mkdir ~/.ssh && chmod 700 ~/.ssh
+    - mkdir ~/.ssh
     - echo "$STAGING_PRIVKEY" > ~/.ssh/id_rsa
-    - chmod 400 ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh && chmod 400 ~/.ssh/id_rsa
     - ansible-galaxy collection install community.docker
     # déplacement du fichier ansible.cfg dans un répertoire
     # où il est reconnu 
     - mv ansible.cfg ~/.ansible.cfg
     - mv inventory ~/inventory
   script:
-    - >
-      ansible-playbook 
-      -e "ansible_become_pass=$STAGING_PSSWD"
-      -e extra_registry_login=$CI_REGISTRY_USER 
-      -e extra_registry_pwd=$REGISTRY_TOKEN
-      -e extra_image_tag=$CI_COMMIT_TAG
-      playbook_main.yml
+    # - >
+    #   ansible-playbook 
+    #   -e "ansible_become_pass=$STAGING_PSSWD"
+    #   -e extra_registry_login=$CI_REGISTRY_USER 
+    #   -e extra_registry_pwd=$REGISTRY_TOKEN
+    #   -e extra_image_tag=$CI_COMMIT_TAG
+    #   playbook_main.yml
+    - ansible staing -m ping
   rules:
     - if: $CI_COMMIT_TAG
   
