@@ -22,7 +22,7 @@ variables:
   TOMCAT_VERSION_MAJOR: 8
   TOMCAT_VERSION_MINOR: 8.5.85
   # DOCKER_TLS_CERTDIR: /certs
-  TRIGGER_BUILD: "on"
+  TRIGGER_BUILD: "off"
 
 stages:
   - build image
