@@ -96,6 +96,7 @@ scan:
     TRIVY_USERNAME: "$CI_REGISTRY_USER"
     TRIVY_PASSWORD: "$REGISTRY_TOKEN"
     TRIVY_AUTH_URL: "$CI_REGISTRY"
+    TRIVY_INSECURE: "true"
     TRIVY_OPTS: >
                 --severity HIGH
                 --scanners vuln
