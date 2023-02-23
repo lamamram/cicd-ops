@@ -33,7 +33,7 @@
     - name: run the tomcat container
       community.docker.docker_container:
         name: my_tomcat_app
-        image: "{{ gitlab_registry_url }}/myusine/ops/my_tomcat_app:1.0"
+        image: "{{ gitlab_registry_url }}/myusine/ops/my_tomcat_app:{{ extra_image_tag }}"
         state: started
         detach: true
         ports:
