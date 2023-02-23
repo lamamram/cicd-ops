@@ -15,6 +15,13 @@
   vars:
     gitlab_registry_url: gitlab.myusine.fr:5050
   tasks: 
+    - name: DOCKER-python | install python docker module
+      pip:
+        name:
+          - setuptools
+          - virtualenv
+          - docker
+    
     - name: log into registry
       community.docker.docker_login:
         registry_url: "{{ gitlab_registry_url }}"
