@@ -160,7 +160,7 @@ push image:
       $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_TAG
     - docker push $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_TAG
     - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$GITLAB_USER_NAME-rc
-    - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_TAG
+    # - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$CI_COMMIT_TAG
   rules:
     - if: $CI_COMMIT_TAG
 
