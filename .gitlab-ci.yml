@@ -178,7 +178,7 @@ deploy:
     # où il est reconnu 
     - mv ansible.cfg ~/.ansible.cfg
     - mv inventory ~/inventory
-    - ansible-galaxy collection install community.docker
+    - "ansible-galaxy collection install community.docker:==2.7.4"
   script:
     - >
       ansible-playbook 
