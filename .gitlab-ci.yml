@@ -187,7 +187,7 @@ deploy:
     #   -e extra_registry_pwd=$REGISTRY_TOKEN
     #   -e extra_image_tag=$CI_COMMIT_TAG
     #   playbook_main.yml
-    - ansible staing -m ping
+    - ansible staging -m ping
   rules:
     - if: $CI_COMMIT_TAG
   
