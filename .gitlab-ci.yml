@@ -22,7 +22,7 @@ variables:
   TOMCAT_VERSION_MAJOR: 8
   TOMCAT_VERSION_MINOR: 8.5.85
   # DOCKER_TLS_CERTDIR: /certs
-  TRIGGER_BUILD: "off"
+  TRIGGER_BUILD: "on"
 
 stages:
   - build image
@@ -70,7 +70,7 @@ docker build:
   rules:
     - changes: [Dockerfile]
       if: $CI_COMMIT_BRANCH
-    - if: $TRIGGER_BUILD == "on"
+    - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_BRANCH
     
 # job issu du template, placé dans le pipeline courant
 # "." comme préfixe de job => désactivation
@@ -145,7 +145,7 @@ scan:
   rules:
     - changes: [Dockerfile]
       if: $CI_COMMIT_BRANCH
-    - if: $TRIGGER_BUILD == "on"
+    - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_BRANCH
 
 # TODO: supprimer un tag "SHA" à distance via une requête HTTP avec curl
 # ou mettre en place le nttoyage de tag dans project -> settings -> packages & registries
