@@ -147,7 +147,8 @@ scan:
       if: $CI_COMMIT_BRANCH
     - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_BRANCH
 
-# TODO: supprimer un tag "SHA" à distance via une requête HTTP avec curl
+# TODO: supprimer un tag "rc" à distance via une requête HTTP avec curl
+# et l'api du registre
 # ou mettre en place le nttoyage de tag dans project -> settings -> packages & registries
 push image:
   tags: [myusine]
