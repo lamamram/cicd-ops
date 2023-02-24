@@ -1,17 +1,3 @@
-# attention: l'image docker ne contient que la CLI
-# pour accéder à un démon docker, deux possibilités:
-
-## 1. partager la socker unix de la VM dans la conf du runner
-##    "volumes = ["/var/run/docker.sock:/var/run/docker.sock",...]"
-##    dans /etc/gitlab-runner/config.toml
-##    attention: solution insecure car accès de TOUS les contenurs du pipeline
-##    au dockerd de la vm (faille possible)
-
-# 2. adjoindre au job un sevice conteneur "docker in docker" contenant un démon
-## service docker:20.10.23-dind
-## doit être lancé avec privilege étendu dans la conf du runner
-## les certificats client et serveur doivent être partagés avec la vm dans la conf
-## DOCKER_TLS_CERTDIR
 image: docker:20.10.23
 
 workflow:
@@ -19,9 +5,10 @@ workflow:
     - if: $CI_PIPELINE_SOURCE != "merge_request_event"
 
 variables:
+  BASE_TAG: 7.9.2009
   TOMCAT_VERSION_MAJOR: 8
   TOMCAT_VERSION_MINOR: 8.5.85
-  # DOCKER_TLS_CERTDIR: /certs
+  DOCKER_TLS_CERTDIR: /certs
   TRIGGER_BUILD: "off"
 
 stages:
@@ -30,14 +17,7 @@ stages:
   - confirm image
   - staging
 
-# template de job générique d'analyse d'image pour gitlab > v15 
-# include:
-#   - template: Security/Container-Scanning.gitlab-ci.yml
-
-# before_script global, exécuté avant les scripts de chaque job
 before_script:
-  # préférer un deploy token (ne fonctionne pas en 15.7.5) 
-  # ou un personal token + variable secrète plutôt que des ids gitlab 
   - >
     echo "$REGISTRY_TOKEN" |
     docker login $CI_REGISTRY
@@ -47,60 +27,33 @@ before_script:
 
 docker build:
   stage: build image
-  # services:
-  #   - docker:20.10.23-dind
   script:
     - >
       docker build -t "$CI_REGISTRY_IMAGE/my_tomcat_app:$GITLAB_USER_NAME-rc" 
       --build-arg TOMCAT_VERSION_MAJOR=$TOMCAT_VERSION_MAJOR
-      --build-arg TOMCAT_VERSION_MINOR=$TOMCAT_VERSION_MINOR .
-    # vérification du HEALTHCHECK
+      --build-arg TOMCAT_VERSION_MINOR=$TOMCAT_VERSION_MINOR 
+      --build-arg BASE_TAG=$BASE_TAG .
     - docker run -d --name test_build $CI_REGISTRY_IMAGE/my_tomcat_app:$GITLAB_USER_NAME-rc
     - sleep 5
     - docker ps -f name="test_build" | grep -o "(healthy)"
-    # upload de l'image sur le registre d'image privé de gitlab
     - docker push $CI_REGISTRY_IMAGE/my_tomcat_app:$GITLAB_USER_NAME-rc
-  # nettoyage du conteneur de test pour éviter de planter à la porchaine exécution
   after_script:
     - docker stop test_build && docker rm test_build
     # - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$GITLAB_USER_NAME-rc
   tags: [myusine]
-  # on ne build que si le Dockerfile a changé
-  # ou si on passe nous même une variable à "on"
   rules:
     - changes: [Dockerfile]
       if: $CI_COMMIT_BRANCH
     - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_BRANCH
-    
-# job issu du template, placé dans le pipeline courant
-# "." comme préfixe de job => désactivation
-# .container_scanning:
-#   stage: test image
-#   tags:
-#     - myusine
-#   before_script: [""]
-#   variables:
-#     # fetch: utilise le code d'un précédent job
-#     GIT_STRATEGY: none
-#     CS_IMAGE: $CI_REGISTRY_IMAGE/my_tomcat_app:rc-1.0
-#     CS_REGISTRY_USER: $CI_REGISTRY_USER
-#     CS_REGISTRY_PASSWORD: $REGISTRY_TOKEN
 
 scan:
   stage: test image
-  # connexion de trivy au registre d'image
   variables:
-    # GIT_STRATEGY: comment gitlab-runner gère le code du projet gitlab ?
-    # none: n'installe pas le code
     GIT_STRATEGY: none
     TRIVY_USERNAME: "$CI_REGISTRY_USER"
     TRIVY_PASSWORD: "$REGISTRY_TOKEN"
     TRIVY_AUTH_URL: "$CI_REGISTRY"
     TRIVY_INSECURE: "true"
-    # --severity: seuil de vulnérabilité pour l'analyse
-    # --scanners vuln: choix du type de scans
-    # --no-progress: nettoyer la console
-    # --cache-dir: placer le cache là où gitlab peut le prélever
     TRIVY_OPTS: >
                 --severity HIGH
                 --scanners vuln
@@ -109,11 +62,9 @@ scan:
                 --format template
   image:
     name: aquasec/trivy
-    # désactivation de l'entrypoint de l'image trivy de base
     entrypoint: [""]
   tags: [myusine]
-  # subsidiarité: neutralisation du before_script global par le before_script local
-  # ... car le conteneur trivy ne contient pas les commandes docker !!!
+  # neutralise le before_script global
   before_script: [""]
   script:
     # - >
@@ -133,10 +84,8 @@ scan:
     paths:
       - .trivycache/
     policy: pull-push
-  # prélèvement des rapports et autres produits du job
   artifacts:
     expire_in: "1 hour"
-    # pour téléchargement
     paths:
       - html-container-scanning-report.html
     # pour intégration dans gitlab pour version < 15 (pas gratuit)
@@ -166,17 +115,13 @@ push image:
     - if: $CI_COMMIT_TAG
 
 deploy:
-  # image contenant les commandes ansible
   image: alpinelinux/ansible:latest
   stage: staging
   tags: [myusine]
-  # gestion de la clé privée pour le déploiememnt
   before_script:
     - mkdir ~/.ssh
     - echo "$STAGING_PRIVKEY" > ~/.ssh/id_rsa
     - chmod 700 ~/.ssh && chmod 400 ~/.ssh/id_rsa
-    # déplacement du fichier ansible.cfg dans un répertoire
-    # où il est reconnu 
     - mv ansible.cfg ~/.ansible.cfg
     - mv inventory ~/inventory
     - "ansible-galaxy collection install community.docker:==2.7.4"

@@ -1,4 +1,5 @@
-FROM centos:7.9.2009
+ARG BASE_TAG
+FROM centos:${BASE_TAG}
 
 LABEL author="matt"
 LABEL created_at.year="2022"

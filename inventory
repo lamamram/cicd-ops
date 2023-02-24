@@ -22,4 +22,5 @@ prod
 ## variables arbitraires attachées à un groupe
 [dev:vars]
 env_user=ansible
+# exécutable à utiliser sur les machines distantes
 ansible_python_interpreter=/usr/bin/python3
