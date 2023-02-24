@@ -26,32 +26,20 @@ before_script:
     --password-stdin
 
 
-get app:
+download:
   stage: get app
   tags: [myusine]
-  image: maven:3.8.7-eclipse-temurin-17-focal
-  before_script:
-    - echo "$GITLAB_ROOT_CA" > /usr/local/share/ca-certificates/gitlab.myusine.fr.pem
-    - update-ca-certificates
-    - >
-      keytool 
-      -import 
-      -trustcacerts
-      -storepass changeit 
-      -noprompt
-      -alias my-gitlab 
-      -file /usr/local/share/ca-certificates/gitlab.myusine.fr.pem 
-      -keystore "$JAVA_HOME/lib/security/cacerts"
   script:
     - >
-      mvn dependency:copy-dependencies
-      -DoutputDirectory=$CI_PROJECT_DIR
-      -s ci_settings.xml
-    - ls -al lib/
-  artifacts:
-    expire_in: "10 minutes"
-    paths:
-      - lib/
+      wget 
+      --header="JOB-TOKEN: $CI_JOB_TOKEN" 
+      --no-check-certificate
+      ${CI_API_V4_URL}/projects/2/packages/generic/rest-service-complete/0.0.1/rest-service-complete-0.0.1.war'
+    - ls -al .
+  # artifacts:
+  #   expire_in: "10 minutes"
+  #   paths:
+  #     - 
 
 .docker build:
   stage: build image
