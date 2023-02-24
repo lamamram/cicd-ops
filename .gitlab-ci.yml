@@ -25,7 +25,26 @@ before_script:
     -u "$CI_REGISTRY_USER"
     --password-stdin
 
+# section yaml non exécutée 
+# et ulisée pour les alias (*) et les ancres (<<:) YAML
+.branch_rules: &branch_rules
+    - changes: [Dockerfile]
+      if: $CI_COMMIT_BRANCH
+    - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_BRANCH
 
+
+# appel au pipeline dev pour regénérer le .war dans le generic package registry
+call dev pipeline:
+  stage: .pre
+  trigger:
+    project: myusine/dev
+    branch: master
+    strategy: depend
+  rules: *branch_rules
+  
+
+# télécharger un .war depuis le generic package registry
+# du projet dev
 download:
   stage: get app
   tags: [myusine]
@@ -39,10 +58,7 @@ download:
     expire_in: "10 minutes"
     paths:
       - rest-service-complete-0.0.1.war
-  rules:
-    - changes: [Dockerfile]
-      if: $CI_COMMIT_BRANCH
-    - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_BRANCH
+  rules: *branch_rules
 
 docker build:
   stage: build image
@@ -61,10 +77,7 @@ docker build:
     - docker stop test_build && docker rm test_build
     # - docker rmi $CI_REGISTRY_IMAGE/my_tomcat_app:$GITLAB_USER_NAME-rc
   tags: [myusine]
-  rules:
-    - changes: [Dockerfile]
-      if: $CI_COMMIT_BRANCH
-    - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_BRANCH
+  rules: *branch_rules
 
 scan:
   stage: test image
@@ -111,10 +124,7 @@ scan:
     # pour intégration dans gitlab pour version < 15 (pas gratuit)
     # reports:
     #   container_scanning: gl-container-scanning-report.json
-  rules:
-    - changes: [Dockerfile]
-      if: $CI_COMMIT_BRANCH
-    - if: $TRIGGER_BUILD == "on" && $CI_COMMIT_BRANCH
+  rules: *branch_rules
 
 # TODO: supprimer un tag "rc" à distance via une requête HTTP avec curl
 # et l'api du registre
