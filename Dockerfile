@@ -11,6 +11,7 @@ LABEL stack.version="1.0.0"
 # via les options "--build-arg VAR=value"
 ARG TOMCAT_VERSION_MAJOR
 ARG TOMCAT_VERSION_MINOR
+ARG WAR_APP
 
 # exprérimentation: 1 run par cmd
 # production: 1 run pour toutes les cmds (minimiser les couches)
@@ -28,7 +29,8 @@ RUN mkdir /opt/tomcat && \
 
 WORKDIR /opt/tomcat/webapps
 
-RUN curl -O https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war
+# RUN curl -O https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war
+COPY ${WAR_APP} ${WAR_APP}
 
 # pour accéder, restaurer, sauvegarder les apps
 VOLUME /opt/tomcat/webapps
