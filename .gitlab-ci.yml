@@ -44,13 +44,14 @@ get app:
       -keystore "$JAVA_HOME/lib/security/cacerts"
   script:
     - >
-      mvn dependency:copy-dependencies
+      mvn dependency:get 
+      -Dartifact=com.example:rest-service-complete:0.0.1-SNAPSHOT
       -DoutputDirectory=$CI_PROJECT_DIR
       -s ci_settings.xml
   artifacts:
     expire_in: "10 minutes"
     paths:
-      - "*.jar"
+      - lib/
 
 .docker build:
   stage: build image
