@@ -34,7 +34,7 @@ download:
       wget 
       --header="JOB-TOKEN: $CI_JOB_TOKEN" 
       --no-check-certificate
-      ${CI_API_V4_URL}/projects/2/packages/generic/rest-service-complete/0.0.1/rest-service-complete-0.0.1.war'
+      ${CI_API_V4_URL}/projects/2/packages/generic/rest-service-complete/0.0.1/rest-service-complete-0.0.1.war
     - ls -al .
   # artifacts:
   #   expire_in: "10 minutes"
