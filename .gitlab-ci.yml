@@ -50,7 +50,7 @@ get app:
   artifacts:
     expire_in: "10 minutes"
     paths:
-      - *.jar
+      - "*.jar"
 
 .docker build:
   stage: build image
