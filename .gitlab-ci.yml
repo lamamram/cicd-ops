@@ -38,7 +38,7 @@ call dev pipeline:
   stage: .pre
   trigger:
     project: myusine/dev
-    branch: master
+    branch: main
     strategy: depend
   rules: *branch_rules
   
