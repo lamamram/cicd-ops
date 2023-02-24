@@ -44,10 +44,10 @@ get app:
       -keystore "$JAVA_HOME/lib/security/cacerts"
   script:
     - >
-      mvn dependency:get 
-      -Dartifact=com.example:rest-service-complete:0.0.1-SNAPSHOT
+      mvn dependency:copy-dependencies
       -DoutputDirectory=$CI_PROJECT_DIR
       -s ci_settings.xml
+    - ls -al lib/
   artifacts:
     expire_in: "10 minutes"
     paths:
