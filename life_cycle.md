@@ -38,3 +38,18 @@
       "-workbench.action.quickOpenView"
     ]
   ```
+
+## effet du namespace "mnt" => mount => points de montages
+
+* dans le conteneur on voit la racine et son i-node (donc emplacement dans le système de fochier de la machine hôte)
+* si on veut comparer le numéro d'inode de "cette" racine avec la racine du hôte
+
+```bash
+docker exec <ctn_name> ls -ali /
+ls -ali
+```  
+* les numéros sont !=
+* le chemin du conteneur donné dans le système du hôtes est dans /var/lib/docker/overlay2/<image_hash>
+
+* donc le namespace "mnt" du conteneur bloque l'accès à l'extérieur des processus dedans 
+
