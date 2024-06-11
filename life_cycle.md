@@ -58,3 +58,7 @@ ls -ali
 * "même puissance" => un processus exécuté doit donner le même état de fin
   => quelque soit le nombre d'exécution
 
+
+## réseaux custom
+ * BEST PRACTICE: on créé par défaut un réseau par microservice (app)
+

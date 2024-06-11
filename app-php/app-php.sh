@@ -5,9 +5,26 @@
 # -q: affiche uniquement les identifiants
 [[ ! -z $(docker ps -aq --filter "name=app-php-*") ]] && docker rm -f $(docker ps -aq -f "name=app-php-*")
 
+# $? code de retour de la commande dernière (0 OK , !=0 KO)
+docker network ls | grep app-php
+if [ $? -eq 0 ]; then
+    docker network rm app-php
+fi
+
+############################## NETWORK #########################################
+
+docker network create \
+       --driver bridge \
+       --subnet 172.18.0.0/24 \
+       --gateway 172.18.0.1 \
+       app-php
+
+############################# CONTAINERS #######################################
+
 docker run \
        --name app-php-fpm \
        -d --restart unless-stopped \
+       --network app-php \
        bitnami/php-fpm:8.3-debian-12
 
 docker cp /vagrant/app-php/index.php app-php-fpm:/srv/index.php
@@ -16,6 +33,7 @@ docker run \
        --name app-php-nginx \
        -d --restart unless-stopped \
        -p 8081:80 \
+       --network app-php \
        nginx:1.27-bookworm
 
 docker cp /vagrant/app-php/php8.3.conf \
