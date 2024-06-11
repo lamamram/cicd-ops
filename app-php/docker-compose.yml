@@ -1,0 +1,52 @@
+# version: "3"
+
+services:
+  web:
+    container_name: app-php-nginx
+    image: nginx:1.27-bookworm
+    restart: unless-stopped
+    networks:
+      - app-php
+    ports:
+      - 8081:80
+    volumes:
+      - ./php8.3.conf:/etc/nginx/conf.d/php8.3.conf:ro
+    depends_on:
+      - php
+  
+  php:
+    container_name: app-php-fpm
+    image: bitnami/php-fpm:8.3-debian-12
+    restart: unless-stopped
+    networks:
+      - app-php
+    volumes:
+      - ./index.php:/srv/index.php
+    depends_on:
+      - db
+
+  db:
+    container_name: app-php-mariadb
+    image: mariadb:11.1.5-jammy
+    restart: unless-stopped
+    networks:
+      - app-php
+    env_file:
+      - .env
+    volumes:
+      - ./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql:ro
+      - db_data:/var/lib/mysql
+
+networks:
+  app-php:
+    name: app-php
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
+          gateway: 172.18.0.1
+
+
+volumes:
+  db_data:
+    name: db_data

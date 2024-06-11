@@ -62,3 +62,8 @@ ls -ali
 ## réseaux custom
  * BEST PRACTICE: on créé par défaut un réseau par microservice (app)
 
+
+ ## conventions de docker compose
+
+ * par défaut, le nom du réseau créé est <nom_du_dossier>_<clé_yaml>
+
