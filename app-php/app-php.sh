@@ -22,6 +22,18 @@ docker network create \
 ############################# CONTAINERS #######################################
 
 docker run \
+       --name app-php-mariadb \
+       -d --restart unless-stopped \
+       --network app-php \
+       -e MARIADB_USER=test \
+       -e MARIADB_PASSWORD=roottoor \
+       -e MARIADB_DATABASE=test \
+       -e MARIADB_ROOT_PASSWORD=roottoor \
+       -v /vagrant/app-php/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql:ro \
+       mariadb:11.1.5-jammy
+
+
+docker run \
        --name app-php-fpm \
        -d --restart unless-stopped \
        --network app-php \
