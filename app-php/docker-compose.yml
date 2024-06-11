@@ -13,6 +13,8 @@ services:
       - ./php8.3.conf:/etc/nginx/conf.d/php8.3.conf:ro
     depends_on:
       - php
+    profiles:
+      - run
   
   php:
     container_name: app-php-fpm
@@ -24,6 +26,8 @@ services:
       - ./index.php:/srv/index.php
     depends_on:
       - db
+    profiles:
+      - run
 
   db:
     container_name: app-php-mariadb
@@ -36,6 +40,19 @@ services:
     volumes:
       - ./mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql:ro
       - db_data:/var/lib/mysql
+    profiles:
+      - run
+  
+  backup:
+    image: debian:12
+    container_name: backup
+    network_mode: none
+    volumes:
+      - db_data:/data
+      - ./dump:/dump
+    command: tar -czvf /dump/dump_cold.tar.gz /data/test
+    profiles:
+      - backup
 
 networks:
   app-php:
