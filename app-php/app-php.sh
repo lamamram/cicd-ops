@@ -27,6 +27,7 @@ docker run \
        --network app-php \
        --env-file /vagrant/app-php/.env \
        -v /vagrant/app-php/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql:ro \
+       -v db_data:/var/lib/mysql \
        mariadb:11.1.5-jammy
 
 # -e MARIADB_USER=test \
