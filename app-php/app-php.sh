@@ -25,13 +25,14 @@ docker run \
        --name app-php-mariadb \
        -d --restart unless-stopped \
        --network app-php \
-       -e MARIADB_USER=test \
-       -e MARIADB_PASSWORD=roottoor \
-       -e MARIADB_DATABASE=test \
-       -e MARIADB_ROOT_PASSWORD=roottoor \
+       --env-file /vagrant/app-php/.env \
        -v /vagrant/app-php/mariadb-init.sql:/docker-entrypoint-initdb.d/mariadb-init.sql:ro \
        mariadb:11.1.5-jammy
 
+# -e MARIADB_USER=test \
+# -e MARIADB_PASSWORD=roottoor \
+# -e MARIADB_DATABASE=test \
+# -e MARIADB_ROOT_PASSWORD=roottoor \
 
 docker run \
        --name app-php-fpm \
