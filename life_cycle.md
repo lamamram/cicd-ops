@@ -63,7 +63,13 @@ ls -ali
  * BEST PRACTICE: on créé par défaut un réseau par microservice (app)
 
 
- ## conventions de docker compose
+## conventions de docker compose
 
  * par défaut, le nom du réseau créé est <nom_du_dossier>_<clé_yaml>
+ * onpeut écrase cette convention avec la clé name:
 
+## docker compose profile
+
+* pour partitionner les ensembles de services qui marchent ensemble
+* attention avec les profile on doit utiliser
+`docker compose --profile <profile_name> ... up | down | run | exec | ...`
