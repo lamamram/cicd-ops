@@ -35,7 +35,7 @@ docker run \
        -d --restart unless-stopped \
        -p 8081:80 \
        --network app-php \
-       -v /vagrant/app-php/php8.3.conf:/etc/nginx/conf.d/php8.3.conf \
+       -v /vagrant/app-php/php8.3.conf:/etc/nginx/conf.d/php8.3.conf:ro \
        nginx:1.27-bookworm
 
 # docker cp /vagrant/app-php/php8.3.conf \
