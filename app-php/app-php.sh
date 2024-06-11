@@ -11,6 +11,11 @@ if [ $? -eq 0 ]; then
     docker network rm app-php
 fi
 
+docker volume ls | grep db_data
+if [ $? -eq 0 ]; then
+    docker volume rm db_data
+fi
+
 ############################## NETWORK #########################################
 
 docker network create \
