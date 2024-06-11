@@ -11,4 +11,9 @@ docker run \
        -p 8081:80 \
        nginx:1.27-bookworm
 
+docker run \
+       --name app-php-fpm \
+       -d --restart unless-stopped \
+       bitnami/php-fpm:8.3-debian-12
+
 
