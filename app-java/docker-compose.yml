@@ -1,0 +1,48 @@
+---
+
+services:
+  tomcat:
+    container_name: app-java-tomcat
+    image: app-java-tomcat:1.0
+    build:
+      # pas de cache pour vérifier que le Dockerfile est intègre
+      # no_cache: true
+      context: ./tomcat
+      dockerfile: Dockerfile
+      args:
+        - TOMCAT_VERSION_MAJOR=${TOMCAT_VERSION_MAJOR:-9}
+        - TOMCAT_VERSION_FULL=${TOMCAT_VERSION_FULL:-9.0.89}
+    networks:
+      - app-java
+    restart: unless-stopped
+    labels:
+      - author.username=mlamamra
+      - author.email=mlamamra@dawan.fr
+
+  
+  httpd:
+    container_name: app-java-httpd
+    image: app-java-httpd:1.0
+    build:
+      # no_cache: true
+      context: ./httpd
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      - app-java
+    ports:
+      - 8083:80
+    depends_on:
+      - tomcat
+    labels:
+      - author.username=mlamamra
+      - author.email=mlamamra@dawan.fr
+    
+networks:
+  app-java:
+    name: app-java
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/24
+          gateway: 172.19.0.1

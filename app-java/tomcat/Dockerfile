@@ -17,9 +17,9 @@ ARG TOMCAT_VERSION_FULL
 ## changer le home de l'image vers /opt/tomcat/webapps
 
 ## optimisations
-## 1/ travailler sur les flux de sorties / entrée vs gérés des fichiers stockés
-## 2/ chainer les commandes pour minimiser les RUN et avoi création et suppression dans la même couche
-## 3/ utilisation des paquets / dépendances les plus légeres
+## 1/ travailler sur les flux de sorties / entrée vs gérer des fichiers stockés
+## 2/ chainer les commandes pour minimiser les RUN et avoir des créations / suppressions dans la même couche
+## 3/ utilisation des paquets / dépendances les plus légères
 ## 4/ en cas d'utilisation de gestionnaires de paquets il faut nettoyer le cache et les paquets & deps non utilisés
 ## SUITE 1/ utiliser un java jre installation source
 ## SUITE 2/ utliser une image FROM optimisée => alpine (image raspberry / arduino)
