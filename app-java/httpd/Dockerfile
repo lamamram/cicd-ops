@@ -9,6 +9,9 @@ LABEL created_at.year="2024"
 LABEL stack="java"
 LABEL stack.item="httpd"
 
+# variables d'environnement: utilisables au moment du docker run --env ...
+ENV HOME /usr/local/apache2
+
 COPY httpd.conf /usr/local/apache2/conf/
 
 RUN mkdir /usr/local/apache2/conf/sites
