@@ -1,20 +1,22 @@
 ## nous allons utiliser une image centos 9: quay.io/centos/centos:stream9
-
-
+FROM quay.io/centos/centos:stream9
 ## documenter l'image
-
-
+LABEL author="matt"
+LABEL created_at="2024-06-12"
+LABEL created_at.year="2024"
+LABEL stack="java"
+LABEL stack.item="tomcat"
 
 ## ajouter un dossier /opt/tomcat
-
-## injecter le fichier https://downloads.apache.org/tomcat/tomcat-9/v9.0.88/bin/apache-tomcat-9.0.88.tar.gz dans ce dossier
-
+RUN mkdir /opt/tomcat
+## injecter le fichier https://downloads.apache.org/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.tar.gz dans ce dossier
+RUN curl https://downloads.apache.org/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.tar.gz -o /opt/tomcat/apache-tomcat-9.0.89.tar.gz
 ## décomprésser dans ce dossier sans dossier intermédiaire 
-
+RUN tar -xzvf /opt/tomcat/apache-tomcat-9.0.89.tar.gz -C /opt/tomcat/ --strip-components=1
+RUN rm -f /opt/tomcat/apache-tomcat-9.0.89.tar.gz
 ## installer java (yum)
 
 ## ajouter un utilisateur tomcat avec le dossier /opt/tomcat comme home
-
 
 ## changer le home de l'image vers /opt/tomcat/webapps
 
