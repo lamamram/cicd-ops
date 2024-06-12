@@ -19,7 +19,7 @@ EXPOSE 80
 EXPOSE 443
 
 # commande statique, non substituable, exécutée au moment du docker run (!= docker exec)
-# Ecriture Toeknizée ["", "", ""] : protection pour les écritures trop complexes
+# Ecriture Tokenizée ["", "", ""] : protection pour les écritures trop complexes
 ENTRYPOINT [ "httpd" ]
 # commande dynamique, substituable, exécutée au moment du docker run
 # CMD est ajoutée après l' ENTRYPOINT s'il existe
