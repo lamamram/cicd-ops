@@ -15,9 +15,10 @@ RUN curl https://downloads.apache.org/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-
 RUN tar -xzvf /opt/tomcat/apache-tomcat-9.0.89.tar.gz -C /opt/tomcat/ --strip-components=1
 RUN rm -f /opt/tomcat/apache-tomcat-9.0.89.tar.gz
 ## installer java (yum)
+RUN yum update -q && yum install java -yq
 
-## ajouter un utilisateur tomcat avec le dossier /opt/tomcat comme home
-
+## ajouter un utilisateur tomcat avec le dossier /opt/tomcat comme home avec le groupe propriétaire
+RUN useradd -m -d -U /opt/tomcat tomcat
 ## changer le home de l'image vers /opt/tomcat/webapps
 
 ## télécharger l'application sample https://tomcat.apache.org/tomcat-10.1-doc/appdev/sample/sample.war dans le dossier home 
