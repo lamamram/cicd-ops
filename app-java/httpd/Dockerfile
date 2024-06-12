@@ -13,7 +13,7 @@ COPY httpd.conf /usr/local/apache2/conf/
 
 RUN mkdir /usr/local/apache2/conf/sites
 
-# COPY java_app.conf /usr/local/apache2/conf/sites/
+COPY java_app.conf /usr/local/apache2/conf/sites/
 
 EXPOSE 80
 EXPOSE 443
