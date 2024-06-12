@@ -9,4 +9,8 @@ LABEL created_at.year="2024"
 LABEL stack="java"
 LABEL stack.item="httpd"
 
+COPY httpd.conf /usr/local/apache2/conf/httpd.conf
+
+
+
 
