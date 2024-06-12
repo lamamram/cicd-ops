@@ -12,7 +12,7 @@ LABEL stack.item="httpd"
 # variables d'environnement: utilisables au moment du docker run --env ...
 ENV HOME /usr/local/apache2
 
-COPY httpd.conf /usr/local/apache2/conf/
+COPY httpd.conf ${HOME}/conf/
 
 RUN mkdir /usr/local/apache2/conf/sites
 

@@ -7,6 +7,8 @@ LABEL created_at.year="2024"
 LABEL stack="java"
 LABEL stack.item="tomcat"
 
+ARG TOMCAT_VERSION_MAJOR=9
+ARG TOMCAT_VERSION_FULL
 ## ajouter un dossier /opt/tomcat
 ## injecter le fichier https://downloads.apache.org/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.tar.gz dans ce dossier
 ## décomprésser dans ce dossier sans dossier intermédiaire 
@@ -23,7 +25,7 @@ LABEL stack.item="tomcat"
 ## SUITE 2/ utliser une image FROM optimisée => alpine (image raspberry / arduino)
 
 RUN mkdir /opt/tomcat && \
-    curl https://downloads.apache.org/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.tar.gz \
+    curl https://downloads.apache.org/tomcat/tomcat-${TOMCAT_VERSION_MAJOR}/v${TOMCAT_VERSION_FULL}/bin/apache-tomcat-${TOMCAT_VERSION_FULL}.tar.gz \
     | tar -xzv -C /opt/tomcat/ --strip-components=1 && \
     yum update -q && yum install java-1.8.0-openjdk-headless -yq && \
     yum clean all && rm -rf /var/cache/yum && \
@@ -48,6 +50,20 @@ EXPOSE 8080
 ENTRYPOINT [ "/opt/tomcat/bin/catalina.sh" ]
 ## ajouter la sous commande pour lancer en one shot run ou start ???
 CMD [ "run" ]
+
+# healthcheck one-shot avec un retry fini
+# healthcheck périodique sans retry (inifini)
+# après le lancement du CMD précédent (docker run),
+# on attent 3s (start-period)
+# pour lancer CMD du HEALTHCHECK avec un timeout de 5s,
+# si le CMD est vrai (exit-code 0) => le docker ps donne un STATUS (healthy),
+# sinon on peut réessayer 3x (retries), avec une durée d'attente de 3s(interval)
+HEALTHCHECK \
+    --start-period=3s \
+    --timeout=5s \
+    --retries=3 \
+    --interval=3s \
+    CMD grep "Server startup" /opt/tomcat/logs/catalina.*.log
 
 
 
