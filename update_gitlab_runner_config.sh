@@ -1,4 +1,4 @@
-sudo cat <<EOF > /etc/gitlab-runner/config.toml
+cat <<EOF > /etc/gitlab-runner/config.toml
 concurrent = 4
 check_interval = 0
 connection_max_age = "15m0s"
