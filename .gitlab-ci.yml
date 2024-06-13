@@ -78,9 +78,9 @@ scan:
     TRIVY_INSECURE: "true"
     TRIVY_OPTS: >
                 --severity LOW
+                --scanners vuln
                 --cache-dir .trivycache/
-                --format template
-    # --scanners vuln
+    # --format template            
     # --no-progress
   image:
     name: aquasec/trivy
@@ -92,9 +92,9 @@ scan:
     - >
       trivy image 
       $TRIVY_OPTS
-      --template "@/contrib/gitlab.tpl" 
-      --output "$CI_PROJECT_DIR/gl-container-scanning-report.json"
       "$CI_REGISTRY_IMAGE/app-java-tomcat:1.0"
+    # --template "@/contrib/gitlab.tpl" 
+    # --output "$CI_PROJECT_DIR/gl-container-scanning-report.json"
     # - >
     #   trivy image 
     #   $TRIVY_OPTS
