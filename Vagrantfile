@@ -8,7 +8,7 @@
 Vagrant.configure(2) do |config|
 
   [
-    ["gitlab.myusine.fr", "6144", "2", "mlamamra/myusine"],
+    ["gitlab.myusine.fr", "8192", "2", "mlamamra/myusine"],
   ].each do |vmname,mem,cpu,os|
     config.vm.define "#{vmname}" do |machine|
 
