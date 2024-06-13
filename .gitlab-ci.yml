@@ -77,11 +77,11 @@ scan:
     TRIVY_AUTH_URL: "$CI_REGISTRY"
     TRIVY_INSECURE: "true"
     TRIVY_OPTS: >
-                --severity MEDIUM
-                --scanners vuln
-                --no-progress
+                --severity LOW
                 --cache-dir .trivycache/
                 --format template
+    # --scanners vuln
+    # --no-progress
   image:
     name: aquasec/trivy
     entrypoint: [""]
@@ -89,18 +89,18 @@ scan:
   # neutralise le before_script global
   before_script: [""]
   script:
-    # - >
-    #   trivy image 
-    #   $TRIVY_OPTS
-    #   --template "@/contrib/gitlab.tpl" 
-    #   --output "$CI_PROJECT_DIR/gl-container-scanning-report.json"
-    #   $CI_REGISTRY_IMAGE/my_tomcat_app:$GITLAB_USER_NAME-rc
     - >
       trivy image 
       $TRIVY_OPTS
-      --template "@/contrib/html.tpl" 
-      --output "$CI_PROJECT_DIR/html-container-scanning-report.html"
+      --template "@/contrib/gitlab.tpl" 
+      --output "$CI_PROJECT_DIR/gl-container-scanning-report.json"
       "$CI_REGISTRY_IMAGE/app-java-tomcat:1.0"
+    # - >
+    #   trivy image 
+    #   $TRIVY_OPTS
+    #   --template "@/contrib/html.tpl" 
+    #   --output "$CI_PROJECT_DIR/html-container-scanning-report.html"
+    #   "$CI_REGISTRY_IMAGE/app-java-tomcat:1.0"
   cache:
     key: trivy
     paths:
