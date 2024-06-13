@@ -1,0 +1,5 @@
+test:
+  tags:
+    - myusine
+  script:
+    - echo "Hello"
