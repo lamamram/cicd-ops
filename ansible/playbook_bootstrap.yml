@@ -10,17 +10,17 @@
 
   # tâches à réaliser sur les machines distantes
   tasks:
-    - name: BOOTSTRAP | check python3.10 presence on host
+    - name: BOOTSTRAP | check python3.11 presence on host
       # stat: informations sur le chemin en paramètre
       ansible.builtin.stat:
-        path: /usr/bin/python3.10
-      # affectation des infos de stat dans la variable check_python310
-      register: check_python310
+        path: /usr/bin/python3.11
+      # affectation des infos de stat dans la variable check_python311
+      register: check_python311
 
     # module debug pour visualiser les variables (objets JSON)
-    # - name: DEBUG | check_python310 value
+    # - name: DEBUG | check_python311 value
     #   debug:
-    #     var: check_python310
+    #     var: check_python311
 
     - name: BOOTSTRAP | intall prerequisites for 3rd party repository
       # module apt: pilotage de apt-get en yaml
@@ -31,31 +31,31 @@
         state: present
         # demander un apt-get update avant l'install
         update_cache: true
-      # conditions d'exécution de la tâche: 3.10 n'existe pas et distribution linux de type debian
-      when: not check_python310.stat.exists and ansible_os_family == "Debian"
+      # conditions d'exécution de la tâche: 3.11 n'existe pas et distribution linux de type debian
+      when: not check_python311.stat.exists and ansible_os_family == "Debian"
       # apt s'exécute en tant que super utilisateur
       # l'utilisateur ansible n'a pas de sudo auto.
       # donc on lance le playbook avec l'option --ask-become-pass
       become: true
 
-    - name: BOOTSTRAP | add 3rd party repo for python 3.10
+    - name: BOOTSTRAP | add 3rd party repo for python 3.11
       ansible.builtin.apt_repository:
         repo: ppa:deadsnakes/ppa
-      when: not check_python310.stat.exists and ansible_os_family == "Debian"
+      when: not check_python311.stat.exists and ansible_os_family == "Debian"
       become: true
 
-    - name: BOOTSTRAP | install python3.10 at last
+    - name: BOOTSTRAP | install python3.11 at last
       ansible.builtin.apt:
-        name: python3.10
+        name: python3.11
         state: present
         update_cache: true
-      when: not check_python310.stat.exists and ansible_os_family == "Debian"
+      when: not check_python311.stat.exists and ansible_os_family == "Debian"
       become: true
 
-    # ln -s /usr/bin/python3.10 /usr/bin/python3
-    - name: BOOTSTRAP | change python3 symlink to python3.10
+    # ln -s /usr/bin/python3.11 /usr/bin/python3
+    - name: BOOTSTRAP | change python3 symlink to python3.11
       ansible.builtin.file:
-        src: /usr/bin/python3.10
+        src: /usr/bin/python3.11
         dest: /usr/bin/python3
         state: link
       become: true
