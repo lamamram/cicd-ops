@@ -17,7 +17,7 @@ download:
       --fail-with-body 
       -o ./app-java/tomcat/sample.war 
       --header "JOB-TOKEN: $CI_JOB_TOKEN" 
-      ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/app-java/0.0.1/sample.war
+      ${CI_API_V4_URL}/projects/1/packages/generic/app-java/0.0.1/sample.war
   artifacts:
     expire_in: "1 hour"
     paths:
