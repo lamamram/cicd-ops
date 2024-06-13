@@ -39,7 +39,8 @@ RUN mkdir /opt/tomcat && \
 WORKDIR /opt/tomcat/webapps
 ## télécharger l'application sample https://tomcat.apache.org/tomcat-10.1-doc/appdev/sample/sample.war dans le dossier home 
 
-RUN curl -k --fail-with-body -o ./sample.war --header "JOB-TOKEN: $CI_JOB_TOKEN" ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/app-java/0.0.1/sample.war
+COPY ./sample.war .
+# RUN curl -k --fail-with-body -o ./sample.war --header "JOB-TOKEN: $CI_JOB_TOKEN" ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/app-java/0.0.1/sample.war
 # ADD https://tomcat.apache.org/tomcat-10.1-doc/appdev/sample/sample.war .
 
 ## spécifier le propriétaire et groupe du dossoer /opt/tomcat et tout son contenu 
