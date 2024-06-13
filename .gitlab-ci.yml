@@ -77,7 +77,7 @@ scan:
     TRIVY_AUTH_URL: "$CI_REGISTRY"
     TRIVY_INSECURE: "true"
     TRIVY_OPTS: >
-                --severity HIGH
+                --severity MEDIUM
                 --scanners vuln
                 --no-progress
                 --cache-dir .trivycache/
