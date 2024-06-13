@@ -42,3 +42,5 @@ build:
     - docker run --name test_build -d app-java-tomcat:1.0
     - sleep 5
     - docker ps -f "name=test_build" | grep -o "(healthy)"
+  after_script:
+    - docker rm -f test_build
