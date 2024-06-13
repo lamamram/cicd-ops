@@ -1,5 +1,12 @@
 image: docker:26.1.3
 
+before_script:
+  - >
+    echo "$REGISTRY_TOKEN" |
+    docker login $CI_REGISTRY
+    -u "$CI_REGISTRY_USER"
+    --password-stdin
+
 variables:
   MANUAL_TRIGGER: "off"
 
@@ -19,6 +26,7 @@ trigger_dev:
 download:
   stage: download
   image: curlimages/curl:latest
+  before_script: []
   tags:
     - myusine
   script:
@@ -43,15 +51,16 @@ build:
     - cd app-java/tomcat
     - >
       docker build 
-      -t app-java-tomcat:1.0
+      -t "$CI_REGISTRY_IMAGE/app-java-tomcat:1.0"
       --build-arg TOMCAT_VERSION_MAJOR=9
       --build-arg TOMCAT_VERSION_FULL=9.0.89
       --build-arg CI_API_V4_URL=$CI_API_V4_URL
       --build-arg CI_PROJECT_ID=$CI_PROJECT_ID
       --build-arg CI_JOB_TOKEN=$CI_JOB_TOKEN
       .
-    - docker run --name test_build -d app-java-tomcat:1.0
+    - docker run --name test_build -d "$CI_REGISTRY_IMAGE/app-java-tomcat:1.0"
     - sleep 5
     - docker ps -f "name=test_build" | grep -o "(healthy)"
+    - docker push "$CI_REGISTRY_IMAGE/app-java-tomcat:1.0"
   after_script:
     - docker rm -f test_build
