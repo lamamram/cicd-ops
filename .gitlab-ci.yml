@@ -106,10 +106,10 @@ scan:
     paths:
       - .trivycache/
     policy: pull-push
-  artifacts:
-    expire_in: "1 hour"
-    paths:
-      - gl-container-scanning-report.json
+  # artifacts:
+  #   expire_in: "1 hour"
+  #   paths:
+  #     - gl-container-scanning-report.json
     # pour intégration dans gitlab pour version < 15 (pas gratuit)
     # reports:
     #   container_scanning: gl-container-scanning-report.json
