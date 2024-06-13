@@ -1,0 +1,61 @@
+---
+# l'objet parent d'un playbook ansible est une liste
+- name: BOOTSTRAP
+  # hosts: par rapport à l'inventaire
+  hosts: dev
+  # compte utilisateur distant
+  # injection de variables via l'opérateur "moustache"
+  # du moteur de templates jinja2
+  remote_user: "{{ env_user }}"
+
+  # tâches à réaliser sur les machines distantes
+  tasks:
+    - name: BOOTSTRAP | check python3.10 presence on host
+      # stat: informations sur le chemin en paramètre
+      ansible.builtin.stat:
+        path: /usr/bin/python3.10
+      # affectation des infos de stat dans la variable check_python310
+      register: check_python310
+
+    # module debug pour visualiser les variables (objets JSON)
+    # - name: DEBUG | check_python310 value
+    #   debug:
+    #     var: check_python310
+
+    - name: BOOTSTRAP | intall prerequisites for 3rd party repository
+      # module apt: pilotage de apt-get en yaml
+      ansible.builtin.apt:
+        name: software-properties-common
+        # programmation déclarative: on cherche à déterminer l'état final plutôt qu'une action
+        # present => apt-get install, absent => apt-get remove
+        state: present
+        # demander un apt-get update avant l'install
+        update_cache: true
+      # conditions d'exécution de la tâche: 3.10 n'existe pas et distribution linux de type debian
+      when: not check_python310.stat.exists and ansible_os_family == "Debian"
+      # apt s'exécute en tant que super utilisateur
+      # l'utilisateur ansible n'a pas de sudo auto.
+      # donc on lance le playbook avec l'option --ask-become-pass
+      become: true
+
+    - name: BOOTSTRAP | add 3rd party repo for python 3.10
+      ansible.builtin.apt_repository:
+        repo: ppa:deadsnakes/ppa
+      when: not check_python310.stat.exists and ansible_os_family == "Debian"
+      become: true
+
+    - name: BOOTSTRAP | install python3.10 at last
+      ansible.builtin.apt:
+        name: python3.10
+        state: present
+        update_cache: true
+      when: not check_python310.stat.exists and ansible_os_family == "Debian"
+      become: true
+
+    # ln -s /usr/bin/python3.10 /usr/bin/python3
+    - name: BOOTSTRAP | change python3 symlink to python3.10
+      ansible.builtin.file:
+        src: /usr/bin/python3.10
+        dest: /usr/bin/python3
+        state: link
+      become: true

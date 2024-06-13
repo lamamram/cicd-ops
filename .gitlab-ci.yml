@@ -43,8 +43,15 @@ trigger_dev:
     paths:
       - ./app-java/tomcat/sample.war
 
+# .build_httpd:
+#   stage: build
+    # ...
+    # script:
+    #   - cd app-java/httpd
+    #   - ...
 
-.build:
+
+.build_tomcat:
   stage: build
   tags:
     - myusine
@@ -67,7 +74,7 @@ trigger_dev:
     - docker rm -f test_build
 
 
-scan:
+.scan:
   stage: scan
   variables:
     # GIT STRATEGY: je ne pas besoin du dépôt git

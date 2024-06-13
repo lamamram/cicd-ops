@@ -1,0 +1,26 @@
+## définition des machines distantes
+# <ip or host>
+# <alias> ansible_host=<ip or host>
+# gitlab.myusine.fr
+staging ansible_host=gitlab.myusine.fr
+# prepod ansible_host=...
+# prod ansible_host=...
+
+## groupes de machines
+[dev]
+staging
+# preprod
+
+[production]
+prod
+
+#[unix]
+#[windows]
+#[paris]
+#[marseille]
+
+## variables arbitraires attachées à un groupe
+[dev:vars]
+env_user=ansible
+# exécutable à utiliser sur les machines distantes
+ansible_python_interpreter=/usr/bin/python3
