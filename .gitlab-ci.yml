@@ -1,9 +1,20 @@
 image: docker:26.1.3
 
+variables:
+  MANUAL_TRIGGER: "on"
+
 stages:
   - download
   - build
 
+trigger_dev:
+  stage: .pre
+  trigger:
+    project: myusine/dev
+    branch: main
+    strategy: depend
+  rules:
+    - if: $MANUAL_TRIGGER == "on"
 
 download:
   stage: download
@@ -24,7 +35,7 @@ download:
       - ./app-java/tomcat/sample.war
 
 
-build:
+.build:
   stage: build
   tags:
     - myusine
