@@ -1,0 +1,14 @@
+---
+# tasks file for install-docker
+
+- name: INSTALL | check docker install-docker
+  ansible.builtin.stat:
+    path: /usr/bin/docker
+  register: check_docker
+
+- name: INSTALL | install docker
+  import_tasks: "{{ role_path }}/tasks/docker.yml"
+  tags: 
+    - 'role:docker'
+  when: not check_docker.stat.exists
+    
