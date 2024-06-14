@@ -1,2 +1,9 @@
 ---
 # defaults file for install-docker
+docker_prerequisites:
+  - ca-certificates 
+  - curl
+
+docker_key_dir: /etc/apt/keyrings
+docker_key_url: https://download.docker.com/linux/debian/gpg
+docker_version: "26.1.3"
