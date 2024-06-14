@@ -9,48 +9,48 @@
     - name: install-docker
       become: true
   
-- name: Deploy tomcat container
-  hosts: dev
-  remote_user: "{{ env_user }}"
-  vars:
-    gitlab_registry_url: gitlab.myusine.fr:5050
-  tasks: 
-    - name: DOCKER-python | install python docker module
-      pip:
-        name:
-          - setuptools
-          - virtualenv
-          - docker
-        state: present
+# - name: Deploy tomcat container
+#   hosts: dev
+#   remote_user: "{{ env_user }}"
+#   vars:
+#     gitlab_registry_url: gitlab.myusine.fr:5050
+#   tasks: 
+#     - name: DOCKER-python | install python docker module
+#       pip:
+#         name:
+#           - setuptools
+#           - virtualenv
+#           - docker
+#         state: present
     
-    - name: log into registry
-      community.docker.docker_login:
-        registry_url: "{{ gitlab_registry_url }}"
-        username: "{{ extra_registry_login }}"
-        password: "{{ extra_registry_pwd }}"
-        reauthorize: false
-      become: true
+#     - name: log into registry
+#       community.docker.docker_login:
+#         registry_url: "{{ gitlab_registry_url }}"
+#         username: "{{ extra_registry_login }}"
+#         password: "{{ extra_registry_pwd }}"
+#         reauthorize: false
+#       become: true
 
-    - name: DEPLOY | pull my_tomcat_app:tag image
-      community.docker.docker_image:
-        name: "{{ gitlab_registry_url }}/myusine/ops/app-java-tomcat:{{ extra_image_tag }}"
-        source: pull
-      become: true
+#     - name: DEPLOY | pull my_tomcat_app:tag image
+#       community.docker.docker_image:
+#         name: "{{ gitlab_registry_url }}/myusine/ops/app-java-tomcat:{{ extra_image_tag }}"
+#         source: pull
+#       become: true
     
-    - name: stop & delete the current tomcat container
-      community.docker.docker_container:
-        name: app-java-tomcat
-        image: "{{ gitlab_registry_url }}/myusine/ops/app-java-tomcat:{{ extra_image_tag }}"
-        state: absent
-      become: true
+#     - name: stop & delete the current tomcat container
+#       community.docker.docker_container:
+#         name: app-java-tomcat
+#         image: "{{ gitlab_registry_url }}/myusine/ops/app-java-tomcat:{{ extra_image_tag }}"
+#         state: absent
+#       become: true
 
-    ## ATTENTION: PAS IDEMPOTENT: ne fonctionne que si le container n'existe pas déjà 
-    - name: run the new tomcat container
-      community.docker.docker_container:
-        name: app-java-tomcat
-        image: "{{ gitlab_registry_url }}/myusine/ops/app-java-tomcat:{{ extra_image_tag }}"
-        state: started
-        detach: true
-        ports:
-          - "8083:8080"
-      become: true
+#     ## ATTENTION: PAS IDEMPOTENT: ne fonctionne que si le container n'existe pas déjà 
+#     - name: run the new tomcat container
+#       community.docker.docker_container:
+#         name: app-java-tomcat
+#         image: "{{ gitlab_registry_url }}/myusine/ops/app-java-tomcat:{{ extra_image_tag }}"
+#         state: started
+#         detach: true
+#         ports:
+#           - "8083:8080"
+#       become: true

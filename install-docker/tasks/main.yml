@@ -11,4 +11,13 @@
   tags: 
     - 'role:docker'
   when: not check_docker.stat.exists
+
+- name: DOCKER | add docker-ce version apt pref file
+  ansible.builtin.template:
+    src: docker-ce.pref.j2
+    dest: /etc/apt/preferences.d/docker-ce.pref
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_os_family == "Debian"
     
