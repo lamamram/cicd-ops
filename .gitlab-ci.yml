@@ -133,7 +133,7 @@ prepare:
     - chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_rsa
   script:
     - cd ansible
-    - mkdir roles && mv install-docker roles  
+    - mkdir roles && mv install-docker roles/install-docker  
     - >
       ansible-playbook 
       -e "ansible_become_pass=$ANSIBLE_USER_PASS"
