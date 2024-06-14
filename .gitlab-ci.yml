@@ -14,6 +14,7 @@ stages:
   - download
   - build
   - scan
+  - prepare
 
 trigger_dev:
   stage: .pre
@@ -120,3 +121,20 @@ trigger_dev:
     # pour intégration dans gitlab pour version < 15 (pas gratuit)
     # reports:
     #   container_scanning: gl-container-scanning-report.json
+
+prepare:
+  stage: prepare
+  tags:
+    - myusine
+  image: alpinelinux/ansible:latest
+  before_script:
+    - mkdir ~/.ssh
+    - echo "$ANSIBLE_PKEY" > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_rsa
+  script:
+    - cd ansible
+    - echo "$ANSIBLE_USER_PASS" > ./pass
+    - >
+      ansible-playbook 
+      --become-password-file=pass 
+      playbook_main.yml
