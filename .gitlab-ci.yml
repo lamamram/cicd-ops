@@ -131,8 +131,8 @@ prepare:
     - mkdir ~/.ssh
     - echo "$ANSIBLE_PKEY" > ~/.ssh/id_rsa
     - chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_rsa
-    - mv ansible.cfg ~/.ansible.cfg
-    - mv inventory ~/inventory
+    - mv ansible/ansible.cfg ~/.ansible.cfg
+    - mv ansible/inventory ~/inventory
   script:
     - cd ansible
     - mkdir roles && mv ../install-docker roles/install-docker  
