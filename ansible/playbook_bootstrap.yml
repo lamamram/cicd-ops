@@ -18,9 +18,9 @@
       register: check_python311
 
     # module debug pour visualiser les variables (objets JSON)
-    # - name: DEBUG | check_python311 value
-    #   debug:
-    #     var: check_python311
+    - name: DEBUG | check_python311 value
+      debug:
+        var: check_python311
 
     - name: BOOTSTRAP | intall prerequisites for 3rd party repository
       # module apt: pilotage de apt-get en yaml

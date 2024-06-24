@@ -6,7 +6,7 @@
       # - curl
     state: present
     update_cache: true
-  with_items: "{{ docker_prerequisites }}"
+  loop: "{{ docker_prerequisites }}"
   when: ansible_os_family == "Debian"
 
 ## le module file est IDEMPOTENT i.e si le dossier existe, nul besoin d'exécuter
