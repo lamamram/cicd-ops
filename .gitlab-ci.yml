@@ -140,3 +140,5 @@ prepare:
       ansible-playbook 
       -e "ansible_become_pass=$ANSIBLE_USER_PASS"
       playbook_main.yml
+  rules:
+    - when: manual
