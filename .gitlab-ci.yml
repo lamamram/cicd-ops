@@ -25,7 +25,7 @@ trigger_dev:
   rules:
     - if: $MANUAL_TRIGGER == "on"
 
-.download:
+download:
   stage: download
   image: curlimages/curl:latest
   before_script: []
@@ -52,7 +52,7 @@ trigger_dev:
     #   - ...
 
 
-.build_tomcat:
+build_tomcat:
   stage: build
   tags:
     - myusine
@@ -75,7 +75,7 @@ trigger_dev:
     - docker rm -f test_build
 
 
-.scan:
+scan:
   stage: scan
   variables:
     # GIT STRATEGY: je ne pas besoin du dépôt git
