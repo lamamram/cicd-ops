@@ -141,4 +141,5 @@ prepare:
       -e "ansible_become_pass=$ANSIBLE_USER_PASS"
       playbook_main.yml
   rules:
-    - when: manual
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
